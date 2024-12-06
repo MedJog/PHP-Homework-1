@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  nginx:
+    image: nginx:latest
+    container_name: nginx-container
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+      - ./html:/var/www/html
+    depends_on:
+      - php-fpm
+    networks:
+      - webnet
+
+  php-fpm:
+    image: php:8.2-fpm
+    container_name: php-fpm-container
+    volumes:
+      - ./html:/var/www/html
+    networks:
+      - webnet
+
+  php-cli:
+    image: php:8.2-cli
+    # image: php:7.4-cli
+    container_name: php-cli-container
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./html:/var/www/html
+    networks:
+      - webnet
+
+networks:
+  webnet:
+    driver: bridge
